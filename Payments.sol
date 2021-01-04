@@ -21,4 +21,6 @@ contract SendMoneyExample {
     function withdrawMoneyTo(address payable _to) public {
         _to.transfer(this.getBalance());
     }
+
+
 }
