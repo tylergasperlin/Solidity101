@@ -34,6 +34,7 @@ contract Mapping {
     }
 
     function sendMoneyTo(address payable _to, uint _amount) public {
+        // for implementation use require
         require(balanceReceived[msg.sender].totalBalance >= _amount, "not enough funds");
         balanceReceived[msg.sender].totalBalance -= _amount;
         _to.transfer(_amount);
