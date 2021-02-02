@@ -16,12 +16,12 @@ contract Mapping {
     // mapping data structure
     mapping(address => Balance) public balanceReceived; 
 
-    function getBalance() public view returns(uint) {
+    function getMyBalance() public view returns(uint) {
         return address(this).balance;
     }
         
 
-    function sendMoney() public payable {
+    function receiveMoney() public payable {
 
         balanceReceived[msg.sender].totalBalance += msg.value;
 
@@ -33,13 +33,13 @@ contract Mapping {
 
     }
 
-    function withdrawMoney(address payable _to, uint _amount) public {
+    function sendMoneyTo(address payable _to, uint _amount) public {
         require(balanceReceived[msg.sender].totalBalance >= _amount, "not enough funds");
         balanceReceived[msg.sender].totalBalance -= _amount;
         _to.transfer(_amount);
     }
 
-    function withdrawAllMoney(address payable _to) public {
+    function sendAllMoneyTo(address payable _to) public {
         // checks effect interaction
 
         //check if you can do something
