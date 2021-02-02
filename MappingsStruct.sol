@@ -2,8 +2,19 @@ pragma solidity ^0.7.4;
 
 contract Mapping {
 
+    struct Payment {
+        uint amount;
+        uint timestamps;
+    }
+
+    struct Balance {
+        uint totalBalance;
+        uint numPayments; 
+        mapping(uint => Payment) payments;
+    }
+
     // mapping data structure
-    mapping(address => uint) public balanceReceived; 
+    mapping(address => Balance) public balanceReceived; 
 
     function getBalance() public view returns(uint) {
         return address(this).balance;
@@ -11,12 +22,20 @@ contract Mapping {
         
 
     function sendMoney() public payable {
-        balanceReceived[msg.sender] += msg.value;
+
+        balanceReceived[msg.sender].totalBalance += msg.value;
+
+        Payment memory payment = Payment(msg.value, block.timestamp);
+
+        balanceReceived[msg.sender].payments[balanceReceived[msg.sender].numPayments] = payment;
+
+        balanceReceived[msg.sender].numPayments++;
+
     }
 
     function withdrawMoney(address payable _to, uint _amount) public {
-        require(balanceReceived[msg.sender] >= _amount, "not enough funds");
-        balanceReceived[msg.sender] -= _amount;
+        require(balanceReceived[msg.sender].totalBalance >= _amount, "not enough funds");
+        balanceReceived[msg.sender].totalBalance -= _amount;
         _to.transfer(_amount);
     }
 
@@ -24,9 +43,9 @@ contract Mapping {
         // checks effect interaction
 
         //check if you can do something
-        uint balanceToSend = balanceReceived[msg.sender];
+        uint balanceToSend = balanceReceived[msg.sender].totalBalance;
         // make sure you can do something and impact state
-        balanceReceived[msg.sender] = 0;
+        balanceReceived[msg.sender].totalBalance = 0;
         // interact with external effect
         _to.transfer(balanceToSend);
     }
